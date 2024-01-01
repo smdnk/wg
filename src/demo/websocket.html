@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Example</title>
+</head>
+<body>
+
+<button onclick="openConnect()">open connect</button>
+<input type="text" aria-label="消息" id="msg">
+<button onclick="send()">send</button>
+<p id="result"></p>
+</body>
+
+<script>
+    let socket = null;
+
+    // Connection opened
+    function openConnect() {
+        if (socket !=null) {
+            alert("socket is opened")
+            return
+        }
+        socket = new WebSocket('ws://localhost:8080/ws');
+        console.log('WebSocket connected');
+
+        socket.addEventListener('open', (event) => {
+            console.log('WebSocket is open');
+        });
+
+        // Listen for messages
+        socket.addEventListener('message', (event) => {
+            console.log('Message from server:', event.data);
+
+            let element = document.querySelector("#result");
+            element.innerHTML = event.data
+        });
+
+        // Connection closed
+        socket.addEventListener('close', (event) => {
+            console.log('WebSocket closed');
+        });
+    }
+
+    function send() {
+        if (socket == null) alert("socket 连接未打开")
+        let element = document.querySelector("#msg");
+        let value = element.value;
+        if (value === undefined || value == null) alert("消息为空")
+        socket.send(element.value)
+    }
+
+</script>
+</html>
